@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, abort
 import json
 
 app = Flask(__name__)
@@ -35,5 +35,12 @@ def camp_index():
 def event_index():
     year = years[request.args['year']]
     return json.dumps(list(year.event.values()))
+
+@app.route('/art/<uuid>')
+def art_show(uuid):
+    for year in years.values():
+        if uuid in year.art:
+            return json.dumps(year.art[uuid])
+    return abort(404)
 
 app.run(port=5000, debug=True)
